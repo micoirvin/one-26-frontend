@@ -9,7 +9,7 @@ export default function Header() {
       <nav className="flex gap-8">
         <button>Google Drive</button>
         <a>
-          <img src={user.picture} alt="" />
+          <img src={user?.picture} alt="" />
         </a>
         <UserInfo />
       </nav>

@@ -8,13 +8,14 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route
-          path="/"
+          path="/protected"
           element={
             <AuthRedirect>
               <Home />
             </AuthRedirect>
           }
         />
+        <Route path="/" element={<Home />} />
 
         <Route path="/login" element={<Login />} />
       </Routes>

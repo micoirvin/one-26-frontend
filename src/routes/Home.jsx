@@ -5,6 +5,8 @@ import useUser from '../hooks/useUser';
 import useLoginTransition from '../hooks/useLoginTransition';
 import { Navigate } from 'react-router-dom';
 import urlToBackend from '../utils/urlToBackend';
+import PartRecorder from '../components/PartRecorder';
+import MixedRecorder from '@/components/MixedRecorder';
 
 export default function Home() {
   const { accessToken, user, setUser } = useUser();
@@ -25,6 +27,7 @@ export default function Home() {
       <Header />
       {/* <Gallery /> */}
       <button onClick={test}>TEST</button>
+      <MixedRecorder />
     </main>
   );
 }

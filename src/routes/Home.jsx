@@ -9,10 +9,8 @@ import PartRecorder from '../components/PartRecorder';
 import MixedRecorder from '@/components/MixedRecorder';
 
 export default function Home() {
-  const { accessToken, user, setUser } = useUser();
-
   const test = () => {
-    fetch(urlToBackend('/api/find-one-26'), {
+    fetch(urlToBackend('/api/generate-id'), {
       credentials: 'include',
       method: 'GET',
     })

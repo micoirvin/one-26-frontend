@@ -11,6 +11,7 @@ export default function useMixedRecorder() {
   const [isRecording, setIsRecording, isRecordingRef, setIsRecording2] =
     useRefState(null);
   const [videoURL, setVideoURL] = useState(null);
+  const blob = useRef(null);
 
   useEffect(() => {
     const streams = [];
@@ -59,7 +60,7 @@ export default function useMixedRecorder() {
 
   const startRecording = () => {
     setIsRecording2(true);
-    recorderRef.current.start(200);
+    recorderRef.current.start(1000);
   };
 
   const stopRecording = () => {
@@ -71,10 +72,11 @@ export default function useMixedRecorder() {
     console.log('handleStop', 'isrecording', isRecordingRef.current);
     if (isRecordingRef.current || chunks.current.length <= 0) return;
 
-    const blob = new Blob(chunks.current, { type: 'video/webm' });
+    const aBlob = new Blob(chunks.current, { type: 'video/webm' });
     chunks.current = [];
 
-    setVideoURL(URL.createObjectURL(blob));
+    setVideoURL(URL.createObjectURL(aBlob));
+    blob.current = aBlob;
   };
 
   return {
@@ -87,5 +89,6 @@ export default function useMixedRecorder() {
     isRecording,
     startRecording,
     stopRecording,
+    blob,
   };
 }

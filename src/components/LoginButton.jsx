@@ -11,6 +11,7 @@ export default function LoginButton() {
     flow: 'implicit',
     scope: G_SCOPES,
     onSuccess: (response) => {
+      console.log('accesstoken', response.access_token);
       fetch(urlToBackend('/auth/google'), {
         method: 'POST',
         credentials: 'include',

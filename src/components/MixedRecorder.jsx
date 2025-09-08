@@ -14,6 +14,7 @@ export default function MixedRecorder() {
     isRecording,
     startRecording,
     stopRecording,
+    blob,
   } = useMixedRecorder();
 
   return (
@@ -55,7 +56,9 @@ export default function MixedRecorder() {
         </button>
       </div>
 
-      <div>{videoURL && <RecordedVideo videoURL={videoURL} />}</div>
+      <div>
+        {videoURL && <RecordedVideo videoURL={videoURL} blob={blob.current} />}
+      </div>
     </div>
   );
 }

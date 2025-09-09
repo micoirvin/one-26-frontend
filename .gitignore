@@ -25,4 +25,4 @@ dist-ssr
 
 .env
 
-./src/vars.js
+/src/vars.js

@@ -47,19 +47,19 @@ export const uploadVideoChunk = async (formData) => {
       body: formData,
       credentials: 'include',
     });
-    if (response.ok) return 'OK';
-    else return onsole.error('Error uploading chunk');
+    if (response.ok) return 200;
+    else return console.error('Error uploading chunk');
   } catch (error) {
     return console.error('Error uploading chunk');
   }
 };
 
-export const finalizeVideoUpload = async (uploadId) => {
+export const finalizeVideoUpload = async (uploadId, appDriveRootFolder) => {
   try {
     const response = await fetch(urlToBackend('/api/upload/video-finalize'), {
       method: 'POST',
       credentials: 'include',
-      body: JSON.stringify({ uploadId }),
+      body: JSON.stringify({ uploadId, appDriveRootFolder }),
       headers: {
         'Content-Type': 'application/json',
       },

@@ -1,1 +1,5 @@
 - Prevent selecting streams while recording.
+
+- Stopping streams should stop recording
+
+- Change credentials. Remove vars.js from commit

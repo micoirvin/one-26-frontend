@@ -3,7 +3,7 @@ import PartRecorder from './PartRecorder';
 import CameraFeed from './CameraFeed';
 import RecordedVideo from './RecordedVideo';
 
-export default function MixedRecorder() {
+export default function MixedRecorder({ isAppReady }) {
   const {
     cameraStream,
     setCameraStream,
@@ -17,6 +17,7 @@ export default function MixedRecorder() {
     blob,
   } = useMixedRecorder();
 
+  if (!isAppReady) return <div>Loading...</div>;
   return (
     <div>
       <div className="flex gap-4">

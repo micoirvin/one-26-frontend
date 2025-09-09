@@ -7,25 +7,16 @@ import { Navigate } from 'react-router-dom';
 import urlToBackend from '../utils/urlToBackend';
 import PartRecorder from '../components/PartRecorder';
 import MixedRecorder from '@/components/MixedRecorder';
+import useInitRootFolder from '../hooks/useInitRootFolder';
 
 export default function Home() {
-  const test = () => {
-    fetch(urlToBackend('/api/generate-id'), {
-      credentials: 'include',
-      method: 'GET',
-    })
-      .then((response) => response.json())
-      .then((json) => console.log(json))
-      .catch((error) => console.error(error));
-  };
-
+  const { isAppReady } = useInitRootFolder();
   return (
     <main>
       LOGGED IN
       <Header />
       {/* <Gallery /> */}
-      <button onClick={test}>TEST</button>
-      <MixedRecorder />
+      <MixedRecorder isAppReady={isAppReady} />
     </main>
   );
 }

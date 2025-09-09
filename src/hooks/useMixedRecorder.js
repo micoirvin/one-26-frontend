@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import useRefState from './useRefState';
+import useUploadChunking from './useUploadChunking';
 
 export default function useMixedRecorder() {
   const [cameraStream, setCameraStream] = useState(null);
@@ -12,6 +13,9 @@ export default function useMixedRecorder() {
     useRefState(null);
   const [videoURL, setVideoURL] = useState(null);
   const blob = useRef(null);
+
+  const { rawChunks, setRawChunks, startNewUpload, stopCurrentUpload } =
+    useUploadChunking();
 
   useEffect(() => {
     const streams = [];
@@ -28,11 +32,12 @@ export default function useMixedRecorder() {
 
     aMixedStream.oninactive = () => {
       console.log('mixedStream is no longer active');
-      recorderRef.current.stop();
+      stopRecording();
     };
 
     aRecorder.ondataavailable = (e) => {
       chunks.current.push(e.data);
+      setRawChunks((prev) => [...prev, e.data]);
 
       console.log('isrec', isRecordingRef.current);
       if (isRecordingRef.current) return;
@@ -60,6 +65,7 @@ export default function useMixedRecorder() {
 
   const startRecording = () => {
     setIsRecording2(true);
+    startNewUpload();
     recorderRef.current.start(1000);
   };
 
@@ -77,6 +83,7 @@ export default function useMixedRecorder() {
 
     setVideoURL(URL.createObjectURL(aBlob));
     blob.current = aBlob;
+    stopCurrentUpload();
   };
 
   return {

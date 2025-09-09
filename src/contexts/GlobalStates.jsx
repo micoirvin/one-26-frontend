@@ -1,10 +1,11 @@
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import UserProvider from './UserContext';
+import vars from '../vars';
 
 export default function GlobalStates({ children }) {
-  const CLIENT_ID = 'willbedeleted';
+  const { G_CLIENT_ID } = vars();
   return (
-    <GoogleOAuthProvider clientId={CLIENT_ID}>
+    <GoogleOAuthProvider clientId={G_CLIENT_ID}>
       <UserProvider>{children}</UserProvider>
     </GoogleOAuthProvider>
   );

@@ -1,7 +1,65 @@
 @import 'tailwindcss';
 
+@theme inline {
+  --color-primary:#142E33; 
+  --color-secondary:#87DCED;
+  --color-tertiary: #8FBAC3;
+  --color-white: #ffffff;
+
+  --breakpoint-xs: 480px;
+}
+
 @layer base {
-  button:disabled {
+  body {
+    @apply text-primary font-semibold;
+  }
+
+  button, a {
+    @apply cursor-pointer;
+  }
+
+  *:disabled, a[disabled] {
     @apply opacity-50;
   }
+
+  input:focus {
+    @apply outline-tertiary;
+  }
 }
+
+@layer components {
+  
+  .button {
+    @apply px-4 py-2 text-center rounded-lg font-semibold transition-all transition duration-300  bg-secondary hover:bg-tertiary;
+  }
+  
+  .button-secondary {
+    @apply px-4 py-2 text-center rounded-lg font-semibold transition-all transition duration-300 bg-tertiary hover:bg-secondary;
+  }
+
+  .button-tertiary {
+    @apply px-4 py-2 text-center rounded-lg font-semibold transition-all transition duration-300 border border-2 border-tertiary hover:bg-tertiary;
+  }
+}
+
+
+@layer utilities {
+  
+  .container {
+    @apply max-w-[70rem] mx-auto px-6;
+  }
+
+  
+}
+
+
+
+/*
+#87DCED
+#142E33
+#8FBAC3
+
+#263E43
+#50696E
+#889698
+/*

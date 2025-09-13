@@ -1,65 +1,76 @@
-import useMixedRecorder from '../hooks/useMixedRecorder';
 import PartRecorder from './PartRecorder';
-import CameraFeed from './CameraFeed';
-import RecordedVideo from './RecordedVideo';
+import useUploading from '../hooks/useUploading';
+import ElapsedTimeIndicator from './ElapsedTimeIndicator';
 
-export default function MixedRecorder({ isAppReady }) {
+export default function MixedRecorder({ mixedRecorder, children }) {
   const {
     cameraStream,
+    microphoneStream,
+    screenStream,
     setCameraStream,
     setMicrophoneStream,
     setScreenStream,
     recorder,
-    videoURL,
     isRecording,
     startRecording,
     stopRecording,
-    blob,
-  } = useMixedRecorder();
+    stopButton,
+    elapsedTime,
+  } = mixedRecorder;
 
-  if (!isAppReady) return <div>Loading...</div>;
+  const { isAwaitingUploadReset } = useUploading();
+
+  const isPartRecorderDisabled =
+    (recorder && isRecording) || isAwaitingUploadReset;
+
   return (
-    <div>
-      <div className="flex gap-4">
-        <PartRecorder
-          streamType={'camera'}
-          setStream={setCameraStream}
-          disabled={recorder && isRecording}
-        />
-        <PartRecorder
-          streamType={'microphone'}
-          setStream={setMicrophoneStream}
-          disabled={recorder && isRecording}
-        />
-        <PartRecorder
-          streamType={'screen'}
-          setStream={setScreenStream}
-          disabled={recorder && isRecording}
-        />
-      </div>
+    <div className="flex gap-8 flex-col items-stretch pb-12 sm:flex-row">
+      <div className="w-full flex flex-col gap-8 max-w-80 sm:gap-4">
+        <div className="flex gap-2 flex-col items-stretch sm:flex-row">
+          <PartRecorder
+            streamType={'camera'}
+            setStream={setCameraStream}
+            stream={cameraStream}
+            disabled={isPartRecorderDisabled}
+          />
+          <PartRecorder
+            streamType={'microphone'}
+            setStream={setMicrophoneStream}
+            stream={microphoneStream}
+            disabled={isPartRecorderDisabled}
+          />
+          <PartRecorder
+            streamType={'screen'}
+            setStream={setScreenStream}
+            stream={screenStream}
+            disabled={isPartRecorderDisabled}
+          />
+        </div>
 
-      <CameraFeed cameraStream={cameraStream} />
+        <div className="flex flex-col gap-2">
+          <button
+            type="button"
+            className="button"
+            disabled={!recorder || isRecording || isAwaitingUploadReset}
+            onClick={startRecording}
+          >
+            Start Recording
+          </button>
 
-      <div className="flex gap-4">
-        <button
-          type="button"
-          disabled={!recorder || isRecording}
-          onClick={startRecording}
-        >
-          start
-        </button>
-        <button
-          type="button"
-          disabled={!recorder || !isRecording}
-          onClick={stopRecording}
-        >
-          stop
-        </button>
-      </div>
+          <button
+            type="button"
+            className="button"
+            disabled={!recorder || !isRecording || isAwaitingUploadReset}
+            onClick={stopRecording}
+            ref={stopButton}
+          >
+            Stop Recording
+          </button>
+        </div>
 
-      <div>
-        {videoURL && <RecordedVideo videoURL={videoURL} blob={blob.current} />}
+        <ElapsedTimeIndicator elapsedTime={elapsedTime} />
       </div>
+      {children}
     </div>
   );
 }

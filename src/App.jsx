@@ -3,25 +3,30 @@ import Home from './routes/Home';
 import Login from './routes/Login';
 import AuthRedirect from './components/AuthRedirect';
 import TestPage from './routes/TestPage';
+import BlockingErrorIndicator from './components/BlockingErrorIndicator';
+import About from './routes/About';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <AuthRedirect>
-              <Home />
-            </AuthRedirect>
-          }
-        />
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <AuthRedirect>
+                <Home />
+              </AuthRedirect>
+            }
+          />
 
-        <Route path="/test" element={<TestPage />} />
+          <Route path="/about" element={<About />} />
 
-        <Route path="/login" element={<Login />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </BrowserRouter>
+      <BlockingErrorIndicator />
+    </>
   );
 }
 

@@ -23,5 +23,5 @@ export default function TestPage() {
     wrap();
   }, [count]);
 
-  return <button onClick={() => setCount(count + 1)}>test</button>;
+  return <div>Go back</div>;
 }

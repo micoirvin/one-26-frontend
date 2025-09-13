@@ -1,12 +1,18 @@
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import UserProvider from './UserContext';
 import vars from '../vars';
+import UploadingProvider from './UploadingContext';
+import BlockingErrorProvider from './BlockingErrorContext';
 
 export default function GlobalStates({ children }) {
   const { G_CLIENT_ID } = vars();
   return (
     <GoogleOAuthProvider clientId={G_CLIENT_ID}>
-      <UserProvider>{children}</UserProvider>
+      <BlockingErrorProvider>
+        <UserProvider>
+          <UploadingProvider>{children}</UploadingProvider>
+        </UserProvider>
+      </BlockingErrorProvider>
     </GoogleOAuthProvider>
   );
 }

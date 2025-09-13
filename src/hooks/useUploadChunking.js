@@ -1,13 +1,12 @@
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   finalizeVideoUpload,
   getNewUploadId,
   uploadVideoChunk,
 } from '../functionality/apiRequests';
-import { useRef } from 'react';
 
 import useUser from '../hooks/useUser';
+import useUploading from './useUploading';
 
 export default function useUploadChunking() {
   const [rawChunks, setRawChunks] = useState([]);
@@ -22,45 +21,98 @@ export default function useUploadChunking() {
   const rawChunkIndex = useRef(0);
   const finalIndexCheck = useRef(null);
 
-  const [willStopUpload, setWillStopUpload] = useState(false);
+  const [willStopChunks, setWillStopChunks] = useState(false);
+  const [willUpload, setWillUpload] = useState(false);
+
+  const uploadFileName = useRef('');
+  const fileLink = useRef('');
 
   const { appDriveRootFolder } = useUser();
+  const {
+    isUploading,
+    setIsUploading,
+    setUploadSuccess,
+    setHasTriedUpload,
+    isAwaitingUploadReset,
+  } = useUploading();
 
-  const startNewUpload = async () => {
-    try {
-      uploadId.current = (await getNewUploadId()).id;
-      console.log('uploadId', uploadId.current);
-    } catch (error) {
-      throw new Error('Failed to generate id');
-    }
+  const startNewChunksUpload = async () => {
+    uploadId.current = (await getNewUploadId())?.id;
+    console.log('upload id:', uploadId.current);
+    return uploadId.current;
   };
 
-  const stopCurrentUpload = () => {
-    setWillStopUpload(true);
-    return;
-    // handle when successful upload
+  const stopChunksUpload = () => {
+    return setWillStopChunks(true);
   };
 
-  const handleStopCurrentUpload = async () => {
+  const uploadPostCleanup = () => {
     setRawChunks([]);
     setUploadableChunks([]);
     setCurrentUploadableChunk([]);
     setCurrentUploadableChunkSize(0);
     uploadChunkIndex.current = 0;
     rawChunkIndex.current = 0;
-    setWillStopUpload(false);
-    try {
-      console.log('appDrive', appDriveRootFolder.current);
-      const response = await finalizeVideoUpload(
-        uploadId.current,
-        appDriveRootFolder.current
-      );
-      console.log(response);
-    } catch (error) {
-      throw new Error("Can't finalize upload");
-    }
+    setWillStopChunks(false);
+    finalIndexCheck.current = null;
     uploadId.current = null;
+    setWillUpload(false);
+    setIsUploading(false);
   };
+
+  const handleUpload = async () => {
+    setIsUploading(true);
+
+    const jsonData = await finalizeVideoUpload(
+      uploadId.current,
+      uploadFileName.current,
+      appDriveRootFolder.current
+    );
+    setHasTriedUpload(true);
+    if (!jsonData) return setIsUploading(false);
+    console.log(jsonData);
+    fileLink.current = jsonData.webViewLink;
+    uploadPostCleanup();
+    setUploadSuccess(true);
+  };
+
+  const triggerUpload = (fileName) => {
+    setWillUpload(true);
+    uploadFileName.current = fileName;
+  };
+
+  useEffect(() => {
+    if (isAwaitingUploadReset) return;
+    fileLink.current = '';
+  }, [isAwaitingUploadReset]);
+
+  useEffect(() => {
+    console.log('uploading', isUploading);
+  }, [isUploading]);
+
+  useEffect(() => {
+    if (!willUpload) return;
+
+    const wrap = () => {
+      console.log(
+        'Finalize Upload',
+        uploadableChunks.length,
+        uploadChunkIndex.current,
+        finalIndexCheck.current,
+        willStopChunks,
+        willUpload
+      );
+      if (
+        willStopChunks &&
+        finalIndexCheck.current !== null &&
+        uploadChunkIndex.current >= finalIndexCheck.current
+      ) {
+        handleUpload();
+      }
+    };
+
+    wrap();
+  }, [willUpload]);
 
   useEffect(() => {
     if (rawChunks.length <= 0) return;
@@ -77,18 +129,12 @@ export default function useUploadChunking() {
       currentRawChunk,
     ];
 
-    console.log(
-      '[chunks]',
-      aCurrentUploadableChunkSize,
-      currentUploadableChunk.length
-    );
-
     rawChunkIndex.current = rawChunkIndex.current + 1;
 
     setCurrentUploadableChunkSize(aCurrentUploadableChunkSize);
     setCurrentUploadableChunk(aCurrentUploadableChunk);
 
-    const willBlob = aCurrentUploadableChunkSize >= maxSize || willStopUpload;
+    const willBlob = aCurrentUploadableChunkSize >= maxSize || willStopChunks;
     if (!willBlob) return;
 
     const blob = new Blob(aCurrentUploadableChunk, { type: 'video/webm' });
@@ -97,10 +143,8 @@ export default function useUploadChunking() {
     setCurrentUploadableChunk([]);
     setCurrentUploadableChunkSize(0);
 
-    if (willStopUpload) {
-      finalIndexCheck.current = uploadableChunks.length;
-    }
-  }, [rawChunks, willStopUpload]);
+    if (willStopChunks) finalIndexCheck.current = uploadableChunks.length;
+  }, [rawChunks, willStopChunks]);
 
   useEffect(() => {
     if (uploadableChunks.length <= 0) return;
@@ -111,27 +155,31 @@ export default function useUploadChunking() {
     formData.append('chunk', uploadableChunks[uploadChunkIndex.current]);
     formData.append('chunkIndex', uploadChunkIndex.current);
     formData.append('uploadId', uploadId.current);
-    console.log('here');
 
     const uploadVideoChunkWrapper = async () => {
       try {
         const response = await uploadVideoChunk(formData);
-        if (response !== 200) setIsLastUploadSuccess(false);
-        setCurrentUploadableChunk([]);
-        setCurrentUploadableChunkSize(0);
+        if (response !== 200) return setIsLastUploadSuccess(false);
+
+        console.log(
+          'chunk with size:',
+          uploadableChunks[uploadChunkIndex.current].size,
+          'uploaded to server temp'
+        );
+
         if (
-          willStopUpload &&
+          willStopChunks &&
           finalIndexCheck.current !== null &&
           uploadChunkIndex.current >= finalIndexCheck.current
         ) {
           console.log(
-            'AM I HERE',
+            'last chunk received',
             uploadableChunks.length,
             uploadChunkIndex.current,
             finalIndexCheck.current
           );
-          handleStopCurrentUpload();
         }
+
         uploadChunkIndex.current = uploadChunkIndex.current + 1;
       } catch (error) {
         if (response !== 200) setIsLastUploadSuccess(false);
@@ -143,5 +191,14 @@ export default function useUploadChunking() {
     // HOW TO HANDLE VERY FAST CALLS??
   }, [uploadableChunks]);
 
-  return { rawChunks, setRawChunks, startNewUpload, stopCurrentUpload };
+  return {
+    rawChunks,
+    setRawChunks,
+    startNewChunksUpload,
+    stopChunksUpload,
+    triggerUpload,
+    uploadPostCleanup,
+    fileLink,
+    uploadId,
+  };
 }

@@ -10,7 +10,21 @@ export default function AuthRedirect({ children }) {
   console.log('isLoggedIn', isLoggedIn);
 
   if (user) return children;
-  else if (isLoading) return <div>Loading...</div>;
-  else if (error) return <div>An error occured. Try reloading</div>;
+  else if (isLoading)
+    return (
+      <main>
+        <section className="container py-8">
+          <div>Loading...</div>
+        </section>
+      </main>
+    );
+  else if (error)
+    return (
+      <main>
+        <section className="container py-8">
+          <div>An error occured. Try reloading</div>
+        </section>
+      </main>
+    );
   else return <Navigate to="/login" replace />;
 }

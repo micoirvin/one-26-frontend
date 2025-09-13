@@ -1,5 +1,40 @@
-- Prevent selecting streams while recording.
+OK - Prevent selecting streams while recording.
 
-- Stopping streams should stop recording
+OK - Stopping streams should stop recording
 
-- Change credentials. Remove vars.js from commit
+OK - Change credentials. Remove vars.js from commit
+
+OK - Get file name and local date from frontend
+
+OK - Remove Camera feed when recording stopped
+
+OK - Clean up when video not uploaded or restarted
+
+OK - Upload chunking states not updating when recording stopped and reset
+
+- Logout
+
+OK - Stopping screen stream should reset states
+
+- On /apirequests, don't return promise. return nothing on error
+
+- fix response formats
+
+- Message: Firefox does not support the App
+
+- Message: For best experience, use Chromium-based
+
+OK- Restart recording. Delete streams, blobs, urls. remove temp files
+
+OK - Indicate if uploaded
+
+OK- Closing pip should turn off camera if not recording,
+
+- but should be hidden when recording
+
+OK- WHY 3 requests on init?
+
+NEXT MILESTONES
+
+- Refresh Token
+- Resume Failed Upload

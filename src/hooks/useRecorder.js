@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 export default function useRecorder(streamType) {
+  const [isActive, setIsActive] = useState(false);
+  const [stream, setStream] = useState(null);
   const keys = {
     camera: {
       getStream: async () =>
@@ -25,12 +27,13 @@ export default function useRecorder(streamType) {
   };
 
   const startMedia = async () => {
-    const stream = await keys[streamType].getStream();
-    stream.oninactive = (e) => {
-      console.log('stream', e.target, 'inactive');
-    };
-    return stream;
+    const aStream = await keys[streamType].getStream();
+    aStream.addEventListener('inactive', () => {
+      setIsActive(false);
+    });
+
+    return aStream;
   };
 
-  return { startMedia };
+  return { startMedia, isActive, setIsActive };
 }

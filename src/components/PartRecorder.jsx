@@ -1,17 +1,34 @@
-import { useEffect, useRef, useState } from 'react';
-import CameraFeed from './CameraFeed';
+import { useEffect } from 'react';
 import useRecorder from '../hooks/useRecorder';
-import useMixedRecorder from '../hooks/useMixedRecorder';
 
-export default function PartRecorder({ streamType, setStream, disabled }) {
-  const { startMedia } = useRecorder(streamType);
+export default function PartRecorder({
+  streamType,
+  stream,
+  setStream,
+  disabled,
+}) {
+  const { startMedia, isActive, setIsActive } = useRecorder(streamType);
 
   const handleClick = async () => {
-    setStream(await startMedia());
+    if (stream) {
+      setStream(null);
+      setIsActive(false);
+    } else {
+      setStream(await startMedia());
+      setIsActive(true);
+    }
   };
 
+  useEffect(() => {
+    setIsActive(stream && true);
+  }, [stream]);
+
   return (
-    <button className="border p-2" onClick={handleClick} disabled={disabled}>
+    <button
+      className={`button-tertiary grow ${isActive ? 'bg-tertiary' : ''}`}
+      onClick={handleClick}
+      disabled={disabled}
+    >
       {streamType}
     </button>
   );

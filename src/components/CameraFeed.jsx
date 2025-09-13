@@ -1,24 +1,20 @@
-import { useEffect, useRef } from 'react';
-import useMixedRecorder from '../hooks/useMixedRecorder';
+import useCameraFeed from '../hooks/useCameraFeed';
 
-export default function CameraFeed({ cameraStream }) {
-  const cameraVideoRef = useRef(null);
-
-  useEffect(() => {
-    console.log('camstream', cameraStream);
-    if (!cameraStream) return;
-    cameraVideoRef.current.srcObject = cameraStream;
-  }, [cameraStream]);
+export default function CameraFeed({ cameraStream, screenStream }) {
+  const { cameraVideoRef, willPip } = useCameraFeed(cameraStream, screenStream);
+  const showVideo = cameraStream && !willPip;
 
   return (
-    <div>
-      camera feed
+    <div
+      className={
+        'max-w-[40rem] ' + (showVideo ? '' : 'invisible pointer-events-none')
+      }
+    >
       <video
         muted
         ref={cameraVideoRef}
         autoPlay
-        style={{ width: 200 }}
-        className="outline"
+        className={'rounded-lg border border-2 border-tertiary w-full h-auto'}
       />
     </div>
   );

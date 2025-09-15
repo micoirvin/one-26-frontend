@@ -60,9 +60,12 @@ export default function Home() {
         )}
       </section>
 
-      <footer className="fixed bottom-0 left-0 p-4 w-full text-center bg-white border-t border-tertiary">
+      <footer className="fixed bottom-0 left-0 p-4 w-full text-center bg-white border-t border-tertiary flex gap-4 text-xs justify-center">
         <a href="/about" className="underline">
           About
+        </a>
+        <a href="/policies" className="underline">
+          Policies
         </a>
       </footer>
     </main>

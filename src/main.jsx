@@ -5,9 +5,9 @@ import App from './App.jsx';
 import GlobalStates from './contexts/GlobalStates.jsx';
 
 createRoot(document.getElementById('root')).render(
-  // <StrictMode>
-  <GlobalStates>
-    <App />
-  </GlobalStates>
-  // </StrictMode>
+  <StrictMode>
+    <GlobalStates>
+      <App />
+    </GlobalStates>
+  </StrictMode>
 );

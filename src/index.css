@@ -25,6 +25,10 @@
   input:focus {
     @apply outline-tertiary;
   }
+
+  strong {
+    @apply font-bold;
+  }
 }
 
 @layer components {

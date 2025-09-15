@@ -18,7 +18,6 @@ export default function useLoginTransition(willForceFetch = true) {
     const wrap = async () => {
       try {
         const data = await getUserInfo();
-        console.log('data', data);
         if (data) {
           setUser(data);
           setIsLoggedIn(true);

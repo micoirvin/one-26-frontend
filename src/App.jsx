@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Home from './routes/Home';
-import Login from './routes/Login';
+import HomePage from './routes/HomePage.jsx';
+import LoginPage from './routes/LoginPage.jsx';
 import AuthRedirect from './components/AuthRedirect';
 import TestPage from './routes/TestPage';
 import BlockingErrorIndicator from './components/BlockingErrorIndicator';
-import About from './routes/About';
+import AboutPage from './routes/AboutPage';
+import PoliciesPage from './routes/PoliciesPage.jsx';
 
 function App() {
   return (
@@ -15,14 +16,15 @@ function App() {
             path="/"
             element={
               <AuthRedirect>
-                <Home />
+                <HomePage />
               </AuthRedirect>
             }
           />
 
-          <Route path="/about" element={<About />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/policies" element={<PoliciesPage />} />
 
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </BrowserRouter>
       <BlockingErrorIndicator />

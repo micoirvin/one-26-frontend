@@ -1,5 +1,11 @@
 # One-26
 
+## Links
+
+- [Web App](https://one-26.web.app/)
+- [Frontend Repo](https://github.com/micoirvin/one-26-frontend)
+- [Backend Repo](https://github.com/micoirvin/one-26-backend)
+
 ## About
 
 Hello, my name is Mico, and I created One-26.
